@@ -35,10 +35,12 @@ async def websocket_endpoint(websocket: WebSocket):
         # Receiver registration
         if role == "receiver":
             password = data.get("password", "")
+            desired_id = str(data.get("receiver_id") or "")
 
             receiver_id = await manager.register_receiver(
                 websocket,
-                password
+                password,
+                desired_id
             )
 
             await websocket.send_json({
