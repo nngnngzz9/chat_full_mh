@@ -31,19 +31,23 @@ class ConnectionManager:
                 )
             ):
                 # ID chua co ai dung, hoac dung password cu -> cho chiem lai
-                # ngay (khong can cho server don ket noi cu bi rot mang)
+                # ngay (khong can cho server don ket noi cu bi rot mang).
+                # Giu lai sender dang noi (neu co) de khong mat ket noi Sender.
                 receiver_id = desired_id
+                previous_sender = existing["sender"] if existing else None
             else:
                 receiver_id = generate_receiver_id()
 
                 while receiver_id in self.receivers:
                     receiver_id = generate_receiver_id()
 
+                previous_sender = None
+
             self.receivers[receiver_id] = {
                 "websocket": websocket,
                 "salt": salt,
                 "password_hash": password_hash,
-                "sender": None
+                "sender": previous_sender
             }
 
         return receiver_id
