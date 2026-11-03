@@ -16,11 +16,22 @@ class ConnectionManager:
         salt, password_hash = hash_password(password)
 
         async with self.lock:
-            if (
-                desired_id
-                and desired_id.isdigit()
-                and desired_id not in self.receivers
+            existing = (
+                self.receivers.get(desired_id)
+                if desired_id and desired_id.isdigit()
+                else None
+            )
+
+            if desired_id and desired_id.isdigit() and (
+                existing is None
+                or verify_password(
+                    password,
+                    existing["salt"],
+                    existing["password_hash"]
+                )
             ):
+                # ID chua co ai dung, hoac dung password cu -> cho chiem lai
+                # ngay (khong can cho server don ket noi cu bi rot mang)
                 receiver_id = desired_id
             else:
                 receiver_id = generate_receiver_id()
