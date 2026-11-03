@@ -48,6 +48,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 "receiver_id": receiver_id
             })
 
+            if manager.receivers[receiver_id]["sender"] is not None:
+                await websocket.send_json({
+                    "type": "sender_connected"
+                })
+
             while True:
                 data = await websocket.receive_json()
 
