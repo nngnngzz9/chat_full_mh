@@ -12,14 +12,21 @@ class ConnectionManager:
         self.receivers = {}
         self.lock = asyncio.Lock()
 
-    async def register_receiver(self, websocket, password):
+    async def register_receiver(self, websocket, password, desired_id=None):
         salt, password_hash = hash_password(password)
 
         async with self.lock:
-            receiver_id = generate_receiver_id()
-
-            while receiver_id in self.receivers:
+            if (
+                desired_id
+                and desired_id.isdigit()
+                and desired_id not in self.receivers
+            ):
+                receiver_id = desired_id
+            else:
                 receiver_id = generate_receiver_id()
+
+                while receiver_id in self.receivers:
+                    receiver_id = generate_receiver_id()
 
             self.receivers[receiver_id] = {
                 "websocket": websocket,
