@@ -61,6 +61,9 @@ async def websocket_endpoint(websocket: WebSocket):
                         "type": "pong"
                     })
 
+                elif data.get("type") == "disconnect":
+                    break
+
         # Sender authentication
         elif role == "sender":
             receiver_id = str(data.get("receiver_id", ""))
@@ -98,6 +101,9 @@ async def websocket_endpoint(websocket: WebSocket):
                         "type": "pong"
                     })
                     continue
+
+                if data.get("type") == "disconnect":
+                    break
 
                 if data.get("type") == "message":
                     message = data.get("text", "")
